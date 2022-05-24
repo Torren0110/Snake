@@ -1,3 +1,4 @@
+from enum import auto
 import pygame
 import graphics
 from random import randint
@@ -15,6 +16,7 @@ SIDE_MARGE = 30
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+GREY = (105, 105, 105)
 
 
 M_TITLE = H0.render("SNAKE", True, WHITE)
@@ -112,7 +114,7 @@ def pauseMenu(pButton):
 
     return run
 
-def game(diff):
+def game(diff, autoInr):
     run = 2
     points = 0
     snake = [[450, 350], [440, 350], [430, 350], [420, 350]]
@@ -123,8 +125,11 @@ def game(diff):
     ticks = 0
     pauseB = pauseButton(WIN, [WHITE, BLACK], [50, 50, 50, 50])
     turn = False
-    diff = SPEEDS[diff - 1]
     bigBait = False
+    if(not autoInr):
+        diff = SPEEDS[diff - 1]
+    else:
+        diff = 10
 
     while(run == 2):
         clock.tick(160)
@@ -166,6 +171,9 @@ def game(diff):
             snake.append(snake[-1])
             setBait(bait, snake)
             points += 5
+
+            if(diff > 1 and points % 2 == 0):
+                diff -= 1
 
         run = isAlive(snake)
 
@@ -210,11 +218,12 @@ def gameOver(points):
         pygame.display.update()
     return run
 
-def options(diff):
+def options(diff, autoInr):
     run = 4
     playButton = button(WIN, [WHITE, BLACK], [260, 350, 170, 60], "PLAY")
     menuButton = button(WIN, [WHITE, BLACK], [470, 350, 170, 60], "MENU")
-    diffSlider = slider(WIN, [WHITE, BLACK], [250, 100], 400, [1, 10], diff, "SET DIFFICULTY")
+    diffSlider = slider(WIN, [WHITE, BLACK], [250, 100], 400, [1, 10], diff, "SET SPEED")
+    autoTick = tickBox(WIN, [WHITE, BLACK, GREY], [WIDTH / 2, 200], "Auto Increase", autoInr)
     
 
     while(run == 4):
@@ -223,6 +232,7 @@ def options(diff):
         menuButton.show()
         playButton.show()
         diffSlider.show()
+        autoTick.show()
 
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
@@ -232,8 +242,15 @@ def options(diff):
         menuButton.update()
         playButton.update()
         diffSlider.update()
+        autoTick.update()
 
         diff = diffSlider.getVal()
+
+        if(autoTick.val):
+            diffSlider.set_color([GREY, BLACK])
+        else:
+            diffSlider.set_color([WHITE, BLACK])
+
 
         if(menuButton.clicked()):
             run = 1
@@ -242,12 +259,13 @@ def options(diff):
 
         pygame.display.update()
     
-    return [run, diff]
+    return [run, diff, autoTick.val]
 
 def menu():
     run = 1
     points = 0
     diff = 5
+    autoInr = False
 
     playButton = button(WIN, [WHITE, BLACK], [260, 350, 170, 60], "PLAY")
     optionsButton = button(WIN, [WHITE, BLACK], [470, 350, 170, 60], "OPTIONS")
@@ -267,15 +285,15 @@ def menu():
             run = menuToGame()
             while(run > 1):
                 if(run == 2):
-                    run, points = game(diff)
+                    run, points = game(diff, autoInr)
                 else:
                     run = gameOver(points)
         elif(optionsButton.clicked()):
-            run, diff = options(diff)
+            run, diff, autoInr = options(diff, autoInr)
             
             while(run > 1):
                 if(run == 2):
-                    run, points = game(diff)
+                    run, points = game(diff, autoInr)
                 else:
                     run = gameOver(points)
         
