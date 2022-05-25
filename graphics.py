@@ -11,6 +11,15 @@ def drawMenu(WIN, playButton, optionsButton, M_TITLE, M_TITLE_RECT):
     playButton.show()
     optionsButton.show()
 
+def drawRects(WIN, pos, width, side, color):
+    y = 0
+
+    for i in pos:
+        pygame.draw.rect(WIN, color, [0, y, i[0], side])
+        pygame.draw.rect(WIN, color, [i[1], y, width - i[1], side])
+        y += side
+
+
 def drawSnake(WIN, snake, S_WIDTH):
     if(snake[0][0] + S_WIDTH == snake[1][0]):
         pygame.draw.rect(WIN, WHITE, [snake[0][0] + 1, snake[0][1] + 1, S_WIDTH - 1, S_WIDTH - 2])

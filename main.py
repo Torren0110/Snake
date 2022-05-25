@@ -95,6 +95,72 @@ def menuToGame():
         currSize -= ch
     return 2
 
+def closeTrans():
+    pos = []
+
+    for i in range(int(HEIGHT / 10)):
+        pos.append([0, WIDTH])
+
+    run = 7
+
+    while(run):
+        clock.tick(10)
+        graphics.drawRects(WIN, pos, WIDTH, 10, WHITE)
+
+        run = 0
+
+        for event in pygame.event.get():
+            if(event.type == pygame.QUIT):
+                return 0
+        
+        for i in range(len(pos)):
+            if(pos[i][0] < pos[i][1]):
+                run = 7
+                pos[i][0] += randint(1, 3) * 10
+                pos[i][1] -= randint(1, 3) * 10
+
+
+        pygame.display.update()
+
+    return 2
+
+def openTrans(points, bait, bigBait, snake, pauseB):
+    pos = []
+
+    for i in range(int(HEIGHT / 10)):
+        pos.append([int(WIDTH / 2), int(WIDTH / 2)])
+
+    run = 7
+
+    while(run):
+        clock.tick(10)
+
+        graphics.drawUI(WIN, str(points), G_TITLE, G_TITLE_RECT, G_POINTS, G_POINTS_RECT)
+        graphics.drawBorder(WIN, SIDE_MARGE, TOP_MARGE, WIDTH, HEIGHT)
+        graphics.drawBait(WIN, bait, S_WIDTH, bigBait)
+        graphics.drawSnake(WIN, snake, S_WIDTH)
+        pauseB.show()
+        graphics.drawRects(WIN, pos, WIDTH, 10, WHITE)
+
+        run = 0
+
+        for event in pygame.event.get():
+            if(event.type == pygame.QUIT):
+                return 0
+        
+        for i in range(len(pos)):
+            if(pos[i][0] > 0):
+                run = 7
+                pos[i][0] -= randint(1, 3) * 10
+            if(pos[i][1] < WIDTH):
+                eun = 7
+                pos[i][1] += randint(1, 3) * 10
+
+
+        pygame.display.update()
+
+    return 2
+
 def pauseMenu(pButton):
     run = 5
 
@@ -130,6 +196,12 @@ def game(diff, autoInr):
         diff = SPEEDS[diff - 1]
     else:
         diff = 10
+
+    run = closeTrans()
+
+    run = openTrans(points, bait, bigBait, snake, pauseB)
+
+
 
     while(run == 2):
         clock.tick(160)
@@ -282,7 +354,7 @@ def menu():
         optionsButton.update()
 
         if(playButton.clicked()):
-            run = menuToGame()
+            run = 2
             while(run > 1):
                 if(run == 2):
                     run, points = game(diff, autoInr)
