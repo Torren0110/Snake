@@ -104,7 +104,7 @@ def closeTrans():
     run = 7
 
     while(run):
-        clock.tick(10)
+        clock.tick(20)
         graphics.drawRects(WIN, pos, WIDTH, 10, WHITE)
 
         run = 0
@@ -133,7 +133,7 @@ def openTrans(points, bait, bigBait, snake, pauseB):
     run = 7
 
     while(run):
-        clock.tick(10)
+        clock.tick(20)
 
         graphics.drawUI(WIN, str(points), G_TITLE, G_TITLE_RECT, G_POINTS, G_POINTS_RECT)
         graphics.drawBorder(WIN, SIDE_MARGE, TOP_MARGE, WIDTH, HEIGHT)
@@ -199,7 +199,8 @@ def game(diff, autoInr):
 
     run = closeTrans()
 
-    run = openTrans(points, bait, bigBait, snake, pauseB)
+    if(run):
+        run = openTrans(points, bait, bigBait, snake, pauseB)
 
 
 
